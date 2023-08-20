@@ -22,9 +22,39 @@ namespace Password_Generator
                 }
                 else if (selectedOption == "2")
                 {
+                    string capsLetters = "ABCDEFGHIGKLMNOPQRSTYVWXYZ";
+                    string smallLetters = "abcdefghigklmnopqrstyvwxyz";
+                    string numbers = "12356789";
+                    string symbols = "~!@#$%^&*";
+                    StringBuilder buffer = new StringBuilder();
+
                     Console.Write("Enter password length: ");
                     var passLength = int.Parse(Console.ReadLine());
-                    GenerateRandomString(passLength);
+
+
+                    Console.Write("[1] Include capital letters? (y/n): ");
+                    var capsAnswer = Console.ReadLine();
+                    if (capsAnswer == "y")
+                        buffer.Append(capsLetters);
+
+                    Console.Write("[2] Include small letters? (y/n): ");
+                    var smallAnswer = Console.ReadLine();
+                    if (smallAnswer == "y")
+                        buffer.Append(smallLetters);
+
+                    Console.Write("[3] Include numbers? (y/n): ");
+                    var numbAnswer = Console.ReadLine();
+                    if (numbAnswer == "y")
+                        buffer.Append(numbers);
+
+                    Console.Write("[4] Include symbols? (y/n): ");
+                    var symbAnswer = Console.ReadLine();
+                    if (symbAnswer == "y")
+                        buffer.Append(symbols);
+
+                    
+
+                    GenerateRandomString(passLength,buffer);
                 }
 
                 Console.WriteLine("___________________________________________________________________ \n");
@@ -35,8 +65,8 @@ namespace Password_Generator
             Console.WriteLine($"Random Number: {new Random().Next(mini, max)}");
         }
 
-        private const string buffer = "ABCDEFGHIGKLMNOPQRSTYVWXYZabcdefghigklmnopqrstyvwxyz12356789~!@#$%^&*";
-        private static void GenerateRandomString(int passlenth)
+        
+        private static void GenerateRandomString(int passlenth, StringBuilder buffer)
         {
             var sb = new StringBuilder();
             for (int i = 0; i < passlenth; i++)
