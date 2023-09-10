@@ -25,19 +25,37 @@ namespace MathExpressionEvaluator
                 if (char.IsDigit(currentChar))
                 {
                     token += currentChar;
+                    if (i == input.Length - 1 && leftSideInitialized)
+                    {
+                        expr.RightSideOperand = double.Parse(token);
+                        break;
+                    }
                 }
                 else if (MathSympols.Contains(currentChar))
                 {
-                    expr.LeftSideOperand = double.Parse(token);
+                    if (!leftSideInitialized)
+                    {
+                        expr.LeftSideOperand = double.Parse(token);
+                        leftSideInitialized = true;
+                    }
                     expr.Operation = ParseMathOperation(currentChar.ToString());
                     token = "";
                 }
-                else if (currentChar == '-')
+                else if (currentChar == '-' && i > 0)
                 {
-
+                    if (expr.Operation == MathOperation.None)
+                    {
+                        expr.Operation = MathOperation.Subtraction;
+                        expr.LeftSideOperand = double.Parse(token);
+                        leftSideInitialized = true;
+                        token = "";
+                    }
+                    else
+                        token += currentChar;
                 }
                 else if (char.IsLetter(currentChar))
                 {
+                    leftSideInitialized= true;
                     token += currentChar;
                 }
                 else if (currentChar == ' ')
@@ -45,43 +63,65 @@ namespace MathExpressionEvaluator
                     if (!leftSideInitialized)
                     {
                         expr.LeftSideOperand = double.Parse(token);
+                        leftSideInitialized = true;
+                        token = "";
                     }
                     else if (expr.Operation == MathOperation.None)
                     {
                         expr.Operation = ParseMathOperation(token);
+                        token = "";
                     }
-                    token= "";
                 }
+                else
+                    token += currentChar;
             }
             return expr;
         }
 
-        private static MathOperation ParseMathOperation(string operation)
+        private static MathOperation ParseMathOperation(string token)
         {
-            switch (operation.ToLower())
+            var operation = token.ToLower() switch
             {
-                case "+":
-                    return MathOperation.Addition;
-                case "*":
-                    return MathOperation.Muliplication;
-                case "/":
-                    return MathOperation.Division;
-                case "%":
-                case "mod":
-                    return MathOperation.Modulus;
-                case "^":
-                case "pow":
-                    return MathOperation.Power;
-                case "sin":
-                    return MathOperation.Sin;
-                case "cos":
-                    return MathOperation.Cos;
-                case "tan":
-                    return MathOperation.Tan;
-                default:
-                    return MathOperation.None;
+                "+" => MathOperation.Addition,
+                "*" => MathOperation.Muliplication,
+                "/" => MathOperation.Division,
 
-            }
+                "%" => MathOperation.Modulus,
+                "mod" => MathOperation.Modulus,
+
+                "^" => MathOperation.Power,
+                "pow" => MathOperation.Power,
+
+                "sin" => MathOperation.Sin,
+                "cos" => MathOperation.Cos,
+                "tan" => MathOperation.Tan,
+                _ => MathOperation.None
+            };
+            return operation;
+
+            //switch (operation.ToLower())
+            //{
+            //    case "+":
+            //        return MathOperation.Addition;
+            //    case "*":
+            //        return MathOperation.Muliplication;
+            //    case "/":
+            //        return MathOperation.Division;
+            //    case "%":
+            //    case "mod":
+            //        return MathOperation.Modulus;
+            //    case "^":
+            //    case "pow":
+            //        return MathOperation.Power;
+            //    case "sin":
+            //        return MathOperation.Sin;
+            //    case "cos":
+            //        return MathOperation.Cos;
+            //    case "tan":
+            //        return MathOperation.Tan;
+            //    default:
+            //        return MathOperation.None;
+            //}
         }
     }
 }
